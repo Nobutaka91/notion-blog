@@ -28,12 +28,12 @@ export default function Home({ allPosts }) {
           Notion Blog🪐🤩🫀
         </h1>
         {allPosts.map((post) => (
-          <div className="mx-4">
+          <div className="mx-4" key={post.slug}>
             <SinglePost
               title={post.title}
               description={post.description}
               date={post.date}
-              tag={post.tags}
+              tags={post.tags}
               slug={post.slug}
             />
           </div>
