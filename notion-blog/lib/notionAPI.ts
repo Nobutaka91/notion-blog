@@ -1,9 +1,12 @@
 import { Client } from '@notionhq/client';
+import { NotionToMarkdown } from 'notion-to-md';
 
 // クライアントの初期化
 const notion = new Client({
   auth: process.env.NOTION_TOKEN,
 });
+
+const n2m = new NotionToMarkdown({ notionClient: notion });
 
 // DBの中の全データを取得
 export const getAllPosts = async () => {
@@ -35,5 +38,32 @@ const getPageMetaData = (post) => {
     date: post.properties.Date.date.start,
     slug: post.properties.Slug.rich_text[0].plain_text,
     tags: getTags(post.properties.Tag.multi_select),
+  };
+};
+
+// 詳細記事のデータを取得するNotionAPIの実装
+export const getSinglePost = async (slug) => {
+  const response = await notion.databases.query({
+    database_id: process.env.NOTION_DATABASE_ID,
+    filter: {
+      property: 'Slug',
+      formula: {
+        string: {
+          equals: slug,
+        },
+      },
+    },
+  });
+
+  const page = response.results[0];
+  const metadata = getPageMetaData(page);
+  // console.log(metadata);
+  const mdBlocks = await n2m.pageToMarkdown(page.id);
+  const mdString = n2m.toMarkdownString(mdBlocks);
+  console.log(mdString);
+
+  return {
+    metadata,
+    markdown: mdString,
   };
 };
