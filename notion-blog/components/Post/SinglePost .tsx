@@ -22,9 +22,12 @@ const SinglePost = (props: Props) => {
               <Link href={`/posts/${slug}`}>{title}</Link>
             </h2>
             <div className="text-gray-400 mr-2">{date}</div>
-            {tags.map((tag) => (
+            {tags.map((tag: string, index: number) => (
               <>
-                <span className="text-white bg-gray-500 rounded-lg px-2 font-medium mr-2">
+                <span
+                  className="text-white bg-gray-500 rounded-lg px-2 font-medium mr-2"
+                  key={index}
+                >
                   {tag}
                 </span>
               </>
@@ -37,9 +40,12 @@ const SinglePost = (props: Props) => {
           <div className="flex items-center gap-3">
             <h2 className="text-gray-100 text-2xl font-medium mb-2">{title}</h2>
             <div className="text-gray-400">{date}</div>
-            {tags.map((tag) => (
+            {tags.map((tag: string, index: number) => (
               <>
-                <span className="text-white bg-gray-500 rounded-lg px-2 font-medium">
+                <span
+                  className="text-white bg-gray-500 rounded-lg px-2 font-medium"
+                  key={index}
+                >
                   {tag}
                 </span>
               </>
