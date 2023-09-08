@@ -14,6 +14,13 @@ export const getAllPosts = async () => {
   const posts = await notion.databases.query({
     database_id: process.env.NOTION_DATABASE_ID!,
     page_size: 100, // データ取得数最大100
+    sorts: [
+      // 投稿をソートする
+      {
+        property: 'Date',
+        direction: 'descending', // 日付を新しい順に並べる
+      },
+    ],
   });
 
   const allPosts = posts.results;
@@ -58,10 +65,9 @@ export const getSinglePost = async (slug) => {
 
   const page = response.results[0];
   const metadata = getPageMetaData(page);
-  // console.log(metadata);
+
   const mdBlocks = await n2m.pageToMarkdown(page.id);
   const mdString = n2m.toMarkdownString(mdBlocks);
-  console.log(mdString);
 
   return {
     metadata,
@@ -128,7 +134,6 @@ export const getAllTags = async () => {
   const allTagsDuplicationLists = allPosts.flatMap((post) => post.tags);
   const set = new Set(allTagsDuplicationLists); // タグの重複をなくす
   const allTagList = Array.from(set);
-  console.log(allTagList);
 
   return allTagList;
 };
