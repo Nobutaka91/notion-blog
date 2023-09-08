@@ -1,9 +1,10 @@
 import React from 'react';
-import { getAllPosts, getSinglePost } from '../../../lib/notionAPI';
+import { getAllPosts, getAllTags, getSinglePost } from '../../../lib/notionAPI';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import Link from 'next/link';
+import Tag from '../../../components/Tag/Tag';
 
 export const getStaticPaths = async () => {
   const allPosts = await getAllPosts();
@@ -17,16 +18,18 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async ({ params }) => {
   const post = await getSinglePost(params.slug);
+  const allTags = await getAllTags();
 
   return {
     props: {
       post,
+      allTags,
     },
     revalidate: 60 * 60 * 6, // ISRを6時間毎に更新
   };
 };
 
-const Post = ({ post }) => {
+const Post = ({ post, allTags }) => {
   return (
     <section className="container lg:px-2 px-5 mx-auto mt-20 lg:w-2/5 ">
       <h2 className="w-full text-2xl font-medium">{post.metadata.title}</h2>
@@ -39,7 +42,7 @@ const Post = ({ post }) => {
             className="bg-sky-900 text-white rounded-xl font-medium px-2 mt-2 inline-block mr-2"
             key={index}
           >
-            {tag}
+            <Link href={`/posts/tag/${tag}/page/1`}>{tag}</Link>
           </p>
         </>
       ))}
@@ -71,6 +74,7 @@ const Post = ({ post }) => {
             ← ホームに戻る
           </span>
         </Link>
+        <Tag tags={allTags} />
       </div>
     </section>
   );
