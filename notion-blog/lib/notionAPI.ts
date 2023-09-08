@@ -14,6 +14,12 @@ export const getAllPosts = async () => {
   const posts = await notion.databases.query({
     database_id: process.env.NOTION_DATABASE_ID!,
     page_size: 100, // データ取得数最大100
+    filter: {
+      property: 'Published', // 投稿公開・非公開の設定
+      checkbox: {
+        equals: true,
+      },
+    },
     sorts: [
       // 投稿をソートする
       {
