@@ -93,3 +93,42 @@ export const getNumberOfPages = async () => {
     (allPosts.length % NUMBER_OF_POSTS_PER_PAGE > 0 ? 1 : 0)
   );
 };
+
+/* タグに応じた記事取得 */
+export const getPostsByTagAndPage = async (tagName: string, page: number) => {
+  const allPosts = await getAllPosts();
+
+  const posts = allPosts.filter((post) =>
+    post.tags.find((tag: string) => tag === tagName)
+  );
+
+  const startIndex = (page - 1) * NUMBER_OF_POSTS_PER_PAGE;
+  const endIndex = startIndex + NUMBER_OF_POSTS_PER_PAGE;
+
+  return posts.slice(startIndex, endIndex);
+};
+
+/* 特定のタグを持つ記事のページ数を計算する */
+export const getNumberOfPagesByTag = async (tagName: string) => {
+  const allPosts = await getAllPosts();
+  const posts = allPosts.filter((post) =>
+    post.tags.find((tag: string) => tag === tagName)
+  );
+
+  return (
+    Math.floor(posts.length / NUMBER_OF_POSTS_PER_PAGE) +
+    (posts.length % NUMBER_OF_POSTS_PER_PAGE > 0 ? 1 : 0)
+  );
+};
+
+/* 全てのタグを取得する */
+export const getAllTags = async () => {
+  const allPosts = await getAllPosts();
+
+  const allTagsDuplicationLists = allPosts.flatMap((post) => post.tags);
+  const set = new Set(allTagsDuplicationLists); // タグの重複をなくす
+  const allTagList = Array.from(set);
+  console.log(allTagList);
+
+  return allTagList;
+};
